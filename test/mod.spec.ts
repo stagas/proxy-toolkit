@@ -6,6 +6,6 @@ describe('getter(cb)', () => {
     const get = Getter(key => 'hello' + key)
     results.push(get.foo)
     results.push(get.bar)
-    expect(results).toEqual(['foo', 'bar'])
+    expect(results).toEqual(['hellofoo', 'hellobar'])
   })
 })
