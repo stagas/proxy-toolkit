@@ -1,0 +1,31 @@
+
+exports[`FluentCapture(cb) creates a fluent capture 1`] = `
+Array [
+  Array [
+    "get",
+    "some",
+  ],
+  Array [
+    "get",
+    "thing",
+  ],
+  Array [
+    "apply",
+    Array [
+      10,
+    ],
+  ],
+  Array [
+    "get",
+    "is",
+  ],
+  Array [
+    "get",
+    "ok",
+  ],
+  Array [
+    "apply",
+    Array [],
+  ],
+]
+`;
