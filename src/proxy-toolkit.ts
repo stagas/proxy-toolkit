@@ -5,16 +5,16 @@ export type GetterReturn<T> = { [K: string]: T }
  *
  * @param cb Called with the key of the property being accessed.
  */
-export const Getter = <T>(cb: (key: string) => T): GetterReturn<T> =>
-  new Proxy({}, { get: (_, key: string) => cb(key) })
+export const Getter = <T>(cb: (key: string) => T, target: any = {}): GetterReturn<T> =>
+  new Proxy(target, { get: (_, key: string) => cb(key) })
 
-export type FluentCapture = (readonly ['get', string | symbol] | readonly ['apply', any[]])[]
+export type FluentCapture = (readonly ['get', string | symbol] | readonly ['apply', any[]])[] & { origin: Error }
 
 export const FluentCaptureSymbol = Symbol()
 
 export const FluentCapture = () => {
-  const fn = () => {}
-  const results: FluentCapture = []
+  const fn = () => { }
+  const results: FluentCapture = Object.assign([], { origin: new Error() })
   const proxy: any = new Proxy(fn, {
     get: (_, key, receiver) => {
       if (key === FluentCaptureSymbol) return true
