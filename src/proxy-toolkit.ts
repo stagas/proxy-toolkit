@@ -12,18 +12,41 @@ export type FluentCapture = (readonly ['get', string | symbol] | readonly ['appl
 
 export const FluentCaptureSymbol = Symbol()
 
-export const FluentCapture = () => {
+export interface FluentCaptureHandler {
+  callMethod(name: string, args: unknown[], ops: FluentCapture): unknown
+}
+
+export function FluentCapture(handler?: FluentCaptureHandler) {
   const fn = () => { }
   const results: FluentCapture = Object.assign([], { origin: new Error() })
   const proxy: any = new Proxy(fn, {
     get: (_, key, receiver) => {
-      if (key === FluentCaptureSymbol) return true
-      if (key === '_results') return results
+      if (key === FluentCaptureSymbol)
+        return true
+      if (key === '_results')
+        return results
+      if (key === 'ops') {
+        return results
+      }
       results.push(['get', key] as const)
       return receiver
     },
     apply: (_, __, args: any[]) => {
-      results.push(['apply', args] as const)
+      const op = ['apply', args] as const
+      results.push(op)
+
+      // if passed a callMethod interceptor and it returns
+      // something, return that and not the proxy instead.
+      const result = handler?.callMethod(
+        results.at(-2)![1] as string,
+        args,
+        results
+      )
+
+      if (result != null) {
+        return result
+      }
+
       return proxy
     },
   })
